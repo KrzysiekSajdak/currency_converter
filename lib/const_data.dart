@@ -1,0 +1,1 @@
+const String coinURL = 'https://api.exchangeratesapi.io/latest';
