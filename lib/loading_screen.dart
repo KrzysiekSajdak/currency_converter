@@ -12,15 +12,38 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+
   Future<AllCurrency> _allData;
   AllCurrency _allCurrency = AllCurrency();
-  bool selectorVisible = false;
+  bool selectorVisibleFirstCurrency = false;
+  bool selectorVisibleSecondCurrency = false;
+  var testMap = {};
+  String firstSelectedCurrency;
+  String secondSelectedCurrency;
+
+  double convertedCurrency;
 
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     _allData = _allCurrency.getData(coinURL);
+    test();
+
     super.initState();
+  }
+
+  List currencyKeyList = [];
+
+  void test() async {
+    try {
+      var data = await AllCurrency().getData(coinURL);
+      testMap = data.allCurrency;
+      for (var item in testMap.keys) {
+        currencyKeyList.add(item.toString());
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget _appBody() {
@@ -31,7 +54,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
             future: _allData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                print(snapshot.data.allCurrency['PLN']);
                 return Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -39,9 +61,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                       CurrencyIconButton(
                         onTap: () {
                           setState(() {
-                            selectorVisible = true;
+                            selectorVisibleFirstCurrency = true;
                           });
-                          print('first - ok');
                         },
                         currencyShortName: 'EUR',
                       ),
@@ -51,7 +72,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
                       ),
                       CurrencyIconButton(
                         onTap: () {
-                          print('second - ok');
+                          setState(() {
+                            selectorVisibleSecondCurrency = true;
+                          });
                         },
                         currencyShortName: 'PLN',
                       ),
@@ -69,29 +92,71 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 
-  List a = ["a", "b", "c"];
-
   Widget iOSPicker() {
+    String pickerLabel() {
+      String output;
+      if (selectorVisibleFirstCurrency) {
+        output = "first currency";
+      } else if (selectorVisibleSecondCurrency) {
+        output = "second currency";
+      }
+      return output.toUpperCase();
+    }
+
     return Column(
       children: <Widget>[
         Expanded(
             flex: 1,
             child: Container(
-              alignment: Alignment.center,
-                color: Colors.black54, child: Text('first currency'))),
+                alignment: Alignment.center,
+                color: Colors.black54,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Text(pickerLabel(),
+                          style: TextStyle(color: Colors.grey.shade300)),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.clear),
+                      color: Colors.grey.shade300,
+                      onPressed: () {
+                        setState(() {
+                          if (selectorVisibleSecondCurrency) {
+                            selectorVisibleSecondCurrency = false;
+                          } else if (selectorVisibleFirstCurrency) {
+                            selectorVisibleFirstCurrency = false;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ))),
         Expanded(
           flex: 4,
           child: CupertinoPicker.builder(
               backgroundColor: Colors.black38,
-              childCount: a.length,
+              childCount: currencyKeyList.length,
               squeeze: 1.2,
               itemExtent: 26.0,
               onSelectedItemChanged: (value) {
                 print(value);
+                setState(() {
+                  if (selectorVisibleFirstCurrency) {
+                    firstSelectedCurrency = currencyKeyList[value];
+                  } else if (selectorVisibleSecondCurrency) {
+                    secondSelectedCurrency = currencyKeyList[value];
+                  }
+                });
+
+                if(firstSelectedCurrency != null && secondSelectedCurrency != null) {
+                  convertedCurrency = (testMap[firstSelectedCurrency] / testMap[secondSelectedCurrency]);
+                }
               },
               itemBuilder: (BuildContext context, int index) {
                 return Text(
-                  a[index],
+                  currencyKeyList[index],
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 );
               }),
@@ -107,7 +172,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
       body: Column(
         children: <Widget>[
           Expanded(flex: 6, child: _appBody()),
-          Expanded(flex: 2, child: selectorVisible ? iOSPicker() : Container()),
+
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                firstSelectedCurrency != null ? Text('1 $firstSelectedCurrency') : Text('add'),
+                Text(' = '),
+                secondSelectedCurrency != null ? Text('${convertedCurrency.toStringAsFixed(2)} $secondSelectedCurrency'):Text('add'),
+              ],
+            ),
+          ),
+          Expanded(
+              flex: 2,
+              child: (selectorVisibleFirstCurrency ||
+                      selectorVisibleSecondCurrency)
+                  ? iOSPicker()
+                  : Container()),
         ],
       ),
     );

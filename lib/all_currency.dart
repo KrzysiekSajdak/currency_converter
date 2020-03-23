@@ -9,7 +9,9 @@ class AllCurrency {
   factory AllCurrency.fromJson(Map<String, dynamic> json) {
     Map output = {};
     output.addAll(json['rates']);
+
     return AllCurrency(
+
       allCurrency: output,
     );
   }
