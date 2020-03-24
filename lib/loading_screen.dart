@@ -12,7 +12,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-
   Future<AllCurrency> _allData;
   AllCurrency _allCurrency = AllCurrency();
   bool selectorVisibleFirstCurrency = false;
@@ -150,8 +149,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   }
                 });
 
-                if(firstSelectedCurrency != null && secondSelectedCurrency != null) {
-                  convertedCurrency = (testMap[firstSelectedCurrency] / testMap[secondSelectedCurrency]);
+                if (firstSelectedCurrency != null &&
+                    secondSelectedCurrency != null) {
+                  convertedCurrency = (testMap[firstSelectedCurrency] /
+                      testMap[secondSelectedCurrency]);
                 }
               },
               itemBuilder: (BuildContext context, int index) {
@@ -165,21 +166,75 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 
+  IconButton addCurrencyButton(Function onPressed) {
+    return IconButton(
+      icon: Icon(Icons.add_circle_outline),
+      color: kAddIconsColor,
+      iconSize: kIconsSize,
+      onPressed: onPressed,
+    );
+  }
+
+  Widget firstFlagAndCurrencyShortName(String selectedCurrency) {
+    return Row(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Image.asset('assets/images/$selectedCurrency.png', width: 40,),
+        ),
+        Text('1 $selectedCurrency', style: kCurrencyValueTextStyle,),
+      ],
+    );
+  }
+
+  Widget secondFlagAndCurrencyShortName(String selectedCurrency, double convertedCurrency) {
+    return Row(
+      children: <Widget>[
+        Text('1 $selectedCurrency', style: kCurrencyValueTextStyle,),
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Image.asset('assets/images/$selectedCurrency.png', width: 40,),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(screenTitle: 'Currency Converter'),
       body: Column(
         children: <Widget>[
-          Expanded(flex: 6, child: _appBody()),
+          //Expanded(flex: 6, child: _appBody()),
 
           Expanded(
+            flex: 4,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                firstSelectedCurrency != null ? Text('1 $firstSelectedCurrency') : Text('add'),
-                Text(' = '),
-                secondSelectedCurrency != null ? Text('${convertedCurrency.toStringAsFixed(2)} $secondSelectedCurrency'):Text('add'),
+                firstSelectedCurrency != null
+                    ? firstFlagAndCurrencyShortName(firstSelectedCurrency)
+                    : addCurrencyButton(() {
+                      setState(() {
+                        selectorVisibleFirstCurrency = true;
+                        iOSPicker();
+                      });
+                }),
+                (firstSelectedCurrency == null ||
+                        secondSelectedCurrency == null)
+                    ? Text(
+                        ' add value ',
+                        style: kFontsTextStyle,
+                      )
+                    : Text(' = ', style: kCurrencyValueTextStyle,),
+                secondSelectedCurrency != null
+                    ? secondFlagAndCurrencyShortName(secondSelectedCurrency, convertedCurrency)
+                    : addCurrencyButton(() {
+                      setState(() {
+                        selectorVisibleSecondCurrency = true;
+                        iOSPicker();
+                      });
+                }),
               ],
             ),
           ),
