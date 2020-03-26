@@ -1,5 +1,4 @@
-import 'package:currencyconverter/loading_screen.dart';
-import 'file:///Users/krzysztofsajdak/Desktop/FlutterAppsMainFolder/currency_converter/tmpFiles/price_screen.dart';
+import 'package:currencyconverter/loading_screen_folder/loading_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());

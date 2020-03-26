@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CurrencyIconButton extends StatelessWidget {
-
   final Function onTap;
   final String currencyShortName;
 
@@ -21,4 +20,3 @@ class CurrencyIconButton extends StatelessWidget {
     );
   }
 }
-

@@ -3,15 +3,22 @@ import 'dart:convert';
 
 class AllCurrency {
   final Map allCurrency;
-
-  AllCurrency({this.allCurrency});
+  final String updateDate;
+  final String currencyBase;
+  AllCurrency({this.allCurrency, this.updateDate, this.currencyBase});
 
   factory AllCurrency.fromJson(Map<String, dynamic> json) {
     Map output = {};
+    String date;
+    String base;
+
     output.addAll(json['rates']);
-
+    date = json['date'];
+    base = json['base'];
+    print(date);
     return AllCurrency(
-
+      updateDate: date,
+      currencyBase: base,
       allCurrency: output,
     );
   }

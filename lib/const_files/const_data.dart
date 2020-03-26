@@ -4,7 +4,7 @@ const String coinURL = 'https://api.exchangeratesapi.io/latest';
 
 //TextStyles
 TextStyle kFontsTextStyle = TextStyle (fontSize: 25, fontStyle: FontStyle.italic, color: Colors.grey);
-TextStyle kCurrencyValueTextStyle = TextStyle(fontSize: 26);
+TextStyle kCurrencyValueTextStyle = TextStyle(fontSize: 22);
 
 //Items sizes
 const double kIconsSize = 30;

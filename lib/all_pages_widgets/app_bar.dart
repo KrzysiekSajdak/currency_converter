@@ -5,7 +5,7 @@ import 'dart:io';
 PreferredSizeWidget appBar({screenTitle}) {
   return Platform.isAndroid
       ? AppBar(
-    title: screenTitle,
+    title: Text(screenTitle),
   )
       : CupertinoNavigationBar(
     backgroundColor: Colors.black38,
