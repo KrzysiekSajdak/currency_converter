@@ -79,8 +79,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
         });
 
         if (firstSelectedCurrency != null && secondSelectedCurrency != null) {
-          convertedCurrency = (loadedCurrencyData[secondSelectedCurrency] /
-              loadedCurrencyData[firstSelectedCurrency]);
+          convertedCurrency = _convertCurrency(
+              firstValue: loadedCurrencyData[firstSelectedCurrency],
+              secondValue: loadedCurrencyData[secondSelectedCurrency]);
         }
       },
     );
@@ -95,6 +96,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 
+  double _convertCurrency({firstValue, secondValue}) {
+    double output;
+
+    output = secondValue / firstValue;
+
+    return output;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,14 +113,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-//                  Container(
-//                      color: Colors.deepPurpleAccent.shade700,
-//                      alignment: Alignment.center,
-//                      child: Padding(
-//                        padding: const EdgeInsets.all(8.0),
-//                        child: Text('last update: $updateDateValue'),
-//                      ),),
                   Container(
                     color: Colors.deepPurpleAccent.shade700,
                     alignment: Alignment.center,
@@ -122,75 +125,101 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   ),
                   Expanded(
                     flex: 4,
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          firstSelectedCurrency != null
-                              ? FlagAndCurrencyName(
-                                  onTap: () {
-                                    selectorVisibleFirstCurrency = true;
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        child: Column(
+                          //crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            firstSelectedCurrency != null
+                                ? FlagAndCurrencyName(
+                                    onTap: () {
+                                      selectorVisibleFirstCurrency = true;
+                                      setState(() {
+                                        _iOSPicker();
+                                      });
+                                    },
+                                    selectedCurrency: firstSelectedCurrency,
+                                    textValue: '1 $firstSelectedCurrency',
+                                    secondFlag: false,
+                                  )
+                                //firstFlagAndCurrencyShortName(firstSelectedCurrency)
+                                : addCurrencyButton(() {
                                     setState(() {
+                                      selectorVisibleFirstCurrency = true;
                                       _iOSPicker();
                                     });
-                                  },
-                                  selectedCurrency: firstSelectedCurrency,
-                                  textValue: '1 $firstSelectedCurrency',
-                                  secondFlag: false,
-                                )
-                              //firstFlagAndCurrencyShortName(firstSelectedCurrency)
-                              : addCurrencyButton(() {
-                                  setState(() {
-                                    selectorVisibleFirstCurrency = true;
-                                    _iOSPicker();
-                                  });
-                                }),
-                          (firstSelectedCurrency == null ||
-                                  secondSelectedCurrency == null)
-                              ? Text((firstSelectedCurrency == null &&
-                              secondSelectedCurrency == null) ?
-                                  ' add first value ' : ' add second value',
-                                  style: kFontsTextStyle,
-                                )
-                              : Text(
-                                  ' = ',
-                                  style: kCurrencyValueTextStyle,
-                                ),
-                          secondSelectedCurrency != null
-                              ? FlagAndCurrencyName(
-                                  selectedCurrency: secondSelectedCurrency,
-                                  onTap: () {
-                                    setState(() {
-                                      selectorVisibleSecondCurrency = true;
-                                      _iOSPicker();
-                                    });
-                                  },
-                                  textValue:
-                                      '${convertedCurrency.toStringAsFixed(2)} $secondSelectedCurrency',
-                                  secondFlag: true,
-                                )
-                              //secondFlagAndCurrencyShortName(
-                              // secondSelectedCurrency, convertedCurrency)
-                              : firstSelectedCurrency != null
-                                  ? addCurrencyButton(() {
+                                  }),
+                            (firstSelectedCurrency == null ||
+                                    secondSelectedCurrency == null)
+                                ? Text(
+                                    (firstSelectedCurrency == null &&
+                                            secondSelectedCurrency == null)
+                                        ? ' add first value '
+                                        : ' add second value',
+                                    style: kFontsTextStyle,
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: IconButton(
+                                      icon: Icon(Icons.swap_vert),
+                                      iconSize: 35,
+                                      onPressed: () {
+                                        var tmp = firstSelectedCurrency;
+                                        firstSelectedCurrency =
+                                            secondSelectedCurrency;
+                                        secondSelectedCurrency = tmp;
+                                        print(loadedCurrencyData[
+                                            firstSelectedCurrency]);
+                                        print(loadedCurrencyData[
+                                            secondSelectedCurrency]);
+                                        setState(() {
+                                          convertedCurrency = _convertCurrency(
+                                              firstValue: loadedCurrencyData[firstSelectedCurrency],
+                                              secondValue: loadedCurrencyData[secondSelectedCurrency]);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                            secondSelectedCurrency != null
+                                ? FlagAndCurrencyName(
+                                    selectedCurrency: secondSelectedCurrency,
+                                    onTap: () {
                                       setState(() {
                                         selectorVisibleSecondCurrency = true;
                                         _iOSPicker();
                                       });
-                                    })
-                                  : Container(),
-                          (firstSelectedCurrency != null && secondSelectedCurrency != null) ? IconButton(
-                            icon: Icon(Icons.refresh),
-                            iconSize: 36,
-                            onPressed: () {
-                              setState(() {
-                                firstSelectedCurrency = null;
-                                secondSelectedCurrency = null;
-                              });
-                            },
-                          ) : Container(),
-                        ],
+                                    },
+                                    textValue:
+                                        '${convertedCurrency.toStringAsFixed(2)} $secondSelectedCurrency',
+                                    secondFlag: true,
+                                  )
+                                //secondFlagAndCurrencyShortName(
+                                // secondSelectedCurrency, convertedCurrency)
+                                : firstSelectedCurrency != null
+                                    ? addCurrencyButton(() {
+                                        setState(() {
+                                          selectorVisibleSecondCurrency = true;
+                                          _iOSPicker();
+                                        });
+                                      })
+                                    : Container(),
+                            (firstSelectedCurrency != null &&
+                                    secondSelectedCurrency != null)
+                                ? IconButton(
+                                    icon: Icon(Icons.refresh),
+                                    iconSize: 36,
+                                    onPressed: () {
+                                      setState(() {
+                                        firstSelectedCurrency = null;
+                                        secondSelectedCurrency = null;
+                                      });
+                                    },
+                                  )
+                                : Container(),
+                          ],
+                        ),
                       ),
                     ),
                   ),
