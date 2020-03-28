@@ -25,6 +25,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   bool secondFlag;
   String updateDateValue;
   double convertedCurrency = 0;
+  var baseCurrencyValue = 1;
 
   @override
   void initState() {
@@ -55,6 +56,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   IOSCurrencyPicker _iOSPicker() {
+
+    baseCurrencyValue = 1;
+
     return IOSCurrencyPicker(
       currencyKeyList: currencyKeyList,
       firstSelectedCurrency: firstSelectedCurrency,
@@ -115,6 +119,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return out;
   }
 
+  String value;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,8 +158,91 @@ class _LoadingScreenState extends State<LoadingScreen> {
                                         _iOSPicker();
                                       });
                                     },
+                                    onLongTap: () {
+                                      setState(() {
+                                        showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Add amount'),
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                content: Container(
+                                                  height: 50,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      TextField(
+                                                        onChanged: (txt) {
+                                                          value = txt;
+                                                        },
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+
+                                                        style: TextStyle(
+
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    child: Text('cancel',
+                                                        style: TextStyle(
+                                                            color: Colors.red.shade400,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold)),
+                                                    onPressed: () {
+                                                      baseCurrencyValue = 1;
+                                                      convertedCurrency = (_convertCurrency(
+                                                          firstValue:
+                                                          loadedCurrencyData[
+                                                          firstSelectedCurrency],
+                                                          secondValue:
+                                                          loadedCurrencyData[
+                                                          secondSelectedCurrency]) *
+                                                          baseCurrencyValue);
+                                                      setState(() {
+                                                        Navigator.pop(context);
+                                                      });
+                                                    },
+                                                  ),
+                                                  FlatButton(
+                                                    child: Text('done',
+                                                        style: TextStyle(
+                                                            color: kMainPurple,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                    onPressed: () {
+                                                      baseCurrencyValue =
+                                                          int.parse(value);
+                                                      convertedCurrency = (_convertCurrency(
+                                                              firstValue:
+                                                                  loadedCurrencyData[
+                                                                      firstSelectedCurrency],
+                                                              secondValue:
+                                                                  loadedCurrencyData[
+                                                                      secondSelectedCurrency]) *
+                                                          baseCurrencyValue);
+                                                      setState(() {
+                                                        Navigator.pop(context);
+                                                      });
+                                                    },
+                                                  ),
+
+                                                ],
+                                              );
+                                            });
+                                      });
+                                    },
                                     selectedCurrency: firstSelectedCurrency,
-                                    textValue: '1 $firstSelectedCurrency',
+                                    textValue: '$firstSelectedCurrency',
+                                    firstCurrencyValue: baseCurrencyValue,
                                     secondFlag: false,
                                   )
                                 //firstFlagAndCurrencyShortName(firstSelectedCurrency)
@@ -183,11 +272,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
                                             secondSelectedCurrency;
                                         secondSelectedCurrency = tmp;
                                         setState(() {
-                                          convertedCurrency = _convertCurrency(
-                                              firstValue: loadedCurrencyData[
-                                                  firstSelectedCurrency],
-                                              secondValue: loadedCurrencyData[
-                                                  secondSelectedCurrency]);
+                                          convertedCurrency = (_convertCurrency(
+                                                  firstValue: loadedCurrencyData[
+                                                      firstSelectedCurrency],
+                                                  secondValue: loadedCurrencyData[
+                                                      secondSelectedCurrency]) *
+                                              baseCurrencyValue);
                                         });
                                       },
                                     ),
@@ -222,6 +312,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                                       setState(() {
                                         firstSelectedCurrency = null;
                                         secondSelectedCurrency = null;
+                                        baseCurrencyValue = 1;
                                       });
                                     },
                                   )

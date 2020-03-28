@@ -6,14 +6,18 @@ import 'package:currencyconverter/loading_screen_folder/drawer.dart';
 class FlagAndCurrencyName extends StatelessWidget {
   final selectedCurrency;
   final onTap;
+  final onLongTap;
   final textValue;
   final secondFlag;
+  final firstCurrencyValue;
 
   FlagAndCurrencyName(
       {@required this.selectedCurrency,
       @required this.onTap,
+        this.onLongTap,
       this.textValue,
-      @required this.secondFlag,});
+      @required this.secondFlag,
+      this.firstCurrencyValue});
 
   Border _border() {
     var out;
@@ -135,6 +139,7 @@ class FlagAndCurrencyName extends StatelessWidget {
   Widget _flagAndCurrencyCard() {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongTap,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Card(
@@ -164,7 +169,7 @@ class FlagAndCurrencyName extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(textValue, style: kCurrencyValueTextStyle,),
+                  firstCurrencyValue == null ? Text('$textValue', style: kCurrencyValueTextStyle,) : Text('${firstCurrencyValue.toString()} $textValue', style: kCurrencyValueTextStyle,),
                   Text(_currencyLongName(selectedCurrency), style: TextStyle(fontStyle: FontStyle.italic),),
                 ],
               ),
