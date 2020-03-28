@@ -1,5 +1,7 @@
+import 'package:currencyconverter/loading_screen_folder/drawer.dart';
 import 'package:currencyconverter/loading_screen_folder/flag_and_currency_name.dart';
 import 'package:currencyconverter/loading_screen_folder/ios_currency_picker.dart';
+import 'package:currencyconverter/themes_data/my_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:currencyconverter/loading_screen_folder/all_currency.dart';
@@ -28,6 +30,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     fetchCurrencyData();
+
     _allData = allCurrency.getData(coinURL);
     super.initState();
   }
@@ -40,8 +43,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void fetchCurrencyData() async {
     try {
       var data = await AllCurrency().getData(coinURL);
-      print(data.updateDate);
       loadedCurrencyData = data.allCurrency;
+      loadedCurrencyData.addAll({"EUR": 1});
       updateDateValue = data.updateDate;
       for (var item in loadedCurrencyData.keys) {
         currencyKeyList.add(item.toString());
@@ -69,7 +72,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
         });
       },
       onSelectedItemChanged: (value) {
-        print(value);
         setState(() {
           if (selectorVisibleFirstCurrency) {
             firstSelectedCurrency = currencyKeyList[value];
@@ -98,29 +100,41 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   double _convertCurrency({firstValue, secondValue}) {
     double output;
-
     output = secondValue / firstValue;
-
     return output;
+  }
+
+  Color a(value) {
+    var out;
+
+    if (value == MyThemeKeys.LIGHT) {
+      out = Colors.grey;
+    } else {
+      out = Colors.white;
+    }
+    return out;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(screenTitle: 'Currency Converter'),
+      drawer: MainDrawer(),
       body: FutureBuilder(
           future: _allData,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
-                    color: Colors.deepPurpleAccent.shade700,
+                    color: Theme.of(context).primaryColorLight,
                     alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('last update: ${snapshot.data.updateDate}'),
+                      child: Text(
+                        'last update: ${snapshot.data.updateDate}',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                   Expanded(
@@ -129,8 +143,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
                       padding: const EdgeInsets.only(top: 8),
                       child: Container(
                         child: Column(
-                          //crossAxisAlignment: CrossAxisAlignment.center,
-                          //mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             firstSelectedCurrency != null
                                 ? FlagAndCurrencyName(
@@ -156,8 +168,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                                 ? Text(
                                     (firstSelectedCurrency == null &&
                                             secondSelectedCurrency == null)
-                                        ? ' add first value '
-                                        : ' add second value',
+                                        ? ' add first currency '
+                                        : ' add second currency',
                                     style: kFontsTextStyle,
                                   )
                                 : Padding(
@@ -170,14 +182,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
                                         firstSelectedCurrency =
                                             secondSelectedCurrency;
                                         secondSelectedCurrency = tmp;
-                                        print(loadedCurrencyData[
-                                            firstSelectedCurrency]);
-                                        print(loadedCurrencyData[
-                                            secondSelectedCurrency]);
                                         setState(() {
                                           convertedCurrency = _convertCurrency(
-                                              firstValue: loadedCurrencyData[firstSelectedCurrency],
-                                              secondValue: loadedCurrencyData[secondSelectedCurrency]);
+                                              firstValue: loadedCurrencyData[
+                                                  firstSelectedCurrency],
+                                              secondValue: loadedCurrencyData[
+                                                  secondSelectedCurrency]);
                                         });
                                       },
                                     ),
@@ -192,11 +202,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
                                       });
                                     },
                                     textValue:
-                                        '${convertedCurrency.toStringAsFixed(2)} $secondSelectedCurrency',
+                                        '${convertedCurrency.toStringAsFixed(4)} $secondSelectedCurrency',
                                     secondFlag: true,
                                   )
-                                //secondFlagAndCurrencyShortName(
-                                // secondSelectedCurrency, convertedCurrency)
                                 : firstSelectedCurrency != null
                                     ? addCurrencyButton(() {
                                         setState(() {

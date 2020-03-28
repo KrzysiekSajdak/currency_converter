@@ -22,8 +22,6 @@ class IOSCurrencyPicker extends StatelessWidget {
       @required this.onSelectedItemChanged});
 
   Widget iOSPicker() {
-    print(selectorVisibleFirstCurrency);
-    var convertedCurrency;
 
     String pickerLabel() {
       String output;
