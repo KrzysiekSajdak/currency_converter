@@ -5,6 +5,7 @@ class AllCurrency {
   final Map allCurrency;
   final String updateDate;
   final String currencyBase;
+
   AllCurrency({this.allCurrency, this.updateDate, this.currencyBase});
 
   factory AllCurrency.fromJson(Map<String, dynamic> json) {
@@ -16,6 +17,7 @@ class AllCurrency {
     date = json['date'];
     base = json['base'];
     print(date);
+
     return AllCurrency(
       updateDate: date,
       currencyBase: base,

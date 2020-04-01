@@ -33,7 +33,7 @@ class _MainDrawerState extends State<MainDrawer> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        width: kDynamicItemsSize(ctx: context, value: 80),
+        width: kDynamicItemsSize(ctx: context, value: 70),
         child: RaisedButton(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           onPressed: () {
@@ -41,12 +41,12 @@ class _MainDrawerState extends State<MainDrawer> {
             _changeTheme(context, theme);
           },
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(6.0),
             child: Text(
               text,
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: kDynamicItemsSize(ctx: context, value: 10)),
+                  fontSize: kDynamicItemsSize(ctx: context, value: 7)),
             ),
           ),
         ),
@@ -116,10 +116,10 @@ class _MainDrawerState extends State<MainDrawer> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     _selectColorButton("Light Theme", MyThemeKeys.LIGHT),
@@ -157,24 +157,13 @@ class _MainDrawerState extends State<MainDrawer> {
                     _drawerInfoText(text: 'url_launcher package', fontWeight: FontWeight.bold, heading: false),
                     _drawerInfoText(text: 'flutter.dev', fontWeight: FontWeight.normal, heading: false),
                     _lineDivider(),
-
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
                     _drawerInfoText(text: 'App version 1.0', fontWeight:FontWeight.bold, heading: false),
                     _drawerInfoText(text: 'Last update 28/03/2020', fontWeight: FontWeight.bold, heading: false),
                   ],
                 ),
               ),
             ),
+
             GestureDetector(
               onTap: () {
                 setState(() {

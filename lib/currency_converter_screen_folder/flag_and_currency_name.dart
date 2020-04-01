@@ -1,7 +1,7 @@
 import 'package:currencyconverter/themes_data/my_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:currencyconverter/const_files/const_data.dart';
-import 'package:currencyconverter/loading_screen_folder/drawer.dart';
+import 'package:currencyconverter/currency_converter_screen_folder/drawer.dart';
 
 class FlagAndCurrencyName extends StatelessWidget {
   final selectedCurrency;
